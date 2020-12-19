@@ -35,10 +35,10 @@ group :development, :test do
 end
 
 group :development, :lint do
-  gem 'rubocop'
-  gem 'rubocop-performance'
-  gem 'rubocop-rails'
-  gem 'rubocop-rspec'
+  gem 'rubocop', '~> 1.6'
+  gem 'rubocop-performance', '~> 1.9'
+  gem 'rubocop-rails', '~> 2.9'
+  gem 'rubocop-rspec', '~> 2.1'
 end
 
 group :development do
