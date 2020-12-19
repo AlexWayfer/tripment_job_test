@@ -28,6 +28,10 @@
 
 ## Решение
 
+### Rails
+
+Впечатления о Rails описывал в [соседнем тестовом задании](https://github.com/AlexWayfer/realy_job_test#rails).
+
 TODO
 
 ## Запуск
