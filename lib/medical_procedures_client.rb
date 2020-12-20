@@ -19,42 +19,52 @@ class MedicalProceduresClient
     procedures_lines = wiki_lines[procedures_begin_index..]
     procedures_end_index = procedures_lines.index { |line| line.match?(/^==[^=]/) }.pred
     procedures_lines = procedures_lines[..procedures_end_index]
-    result = {}
+
     result_endpoint_path = []
-    procedures_lines.each do |line|
+    current_list_indentation_level = 1
+
+    procedures_lines.each_with_object({}) do |line, result|
       line.chomp!
 
       if line.start_with?('===')
         ## Not `delete` or `tr` for saving `=` inside text
         category = line.match(/^={3}(.+)={3}$/)[1]
-        result[category] = {}
+        result[category] = []
         result_endpoint_path = [category]
         next
       end
 
       next unless (list_line_match = line.match(/^(?<indentation>(?:\*\s*)+)(?<text>[^*].+)$/))
 
-      list_indentation_level = list_line_match[:indentation].count('*').pred
+      list_indentation_level = list_line_match[:indentation].count('*')
       line_text = list_line_match[:text]
 
       result_endpoint = result.dig(*result_endpoint_path)
 
-      ## Exclude level of categories
-      current_list_indentation_level = result_endpoint_path.size.pred
-
-      # binding.pry
-
       if list_indentation_level == current_list_indentation_level
-        puts "result = #{result}, result_endpoint_path = #{result_endpoint_path}"
-        result_endpoint[line_text] = {}
-        result_endpoint_path.push line_text
+        result_endpoint.push line_text
       elsif list_indentation_level > current_list_indentation_level
-        # result_endpoint line_text => {}
-        # result_endpoint_path.push line_text
-        raise 'Unexpected jump over list nesting level'
+        ## Not `result_endpoint_path.size` because nested Hashes requires two additions:
+        ## Array index and Hash key
+        current_list_indentation_level += 1
+
+        unless result_endpoint.last.is_a?(Hash)
+          root_of_sublist = result_endpoint.pop
+          ## `.size` without `- 1` because element already popped
+          result_endpoint_path.push result_endpoint.size, root_of_sublist
+          result_endpoint.push(root_of_sublist => [])
+          result_endpoint = result.dig(*result_endpoint_path)
+        end
+        result_endpoint.push line_text
+
       elsif list_indentation_level < current_list_indentation_level
-        result_endpoint_path.pop
-        result_endpoint[line_text] = {}
+        ## 2 times because there are Array index and Hash key
+        2.times { result_endpoint_path.pop }
+        ## But we count it like one indentation level
+        current_list_indentation_level -= 1
+
+        result_endpoint = result.dig(*result_endpoint_path)
+        result_endpoint.push line_text
       end
     end
   end
