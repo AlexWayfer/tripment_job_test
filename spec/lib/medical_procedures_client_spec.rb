@@ -8,95 +8,96 @@ RSpec.describe MedicalProceduresClient do
   describe '#query' do
     subject { super().query }
 
-    # rubocop:disbale Style/WordArray
     let(:expected_output) do
       {
-        'Propaedeutic' => [
-          'Medical inspection',
+        'Propaedeutic' => include(
+          'Medical inspection (body features)',
           'Palpation',
-          'Vital signs'
-        ],
-        'Diagnostic' => [
+          'Percussion',
+          <<~TEXT.chomp
+            Vital signs measurement, such as blood pressure, body temperature, or pulse (or heart rate)
+          TEXT
+        ),
+        'Diagnostic' => include(
           {
-            'Lab test' => [
+            'Lab tests' => include(
               'Biopsy test',
               'Urinalysis'
-            ]
+            )
           },
           'Electrocardiography',
           {
-            'Endoscopy' => [
+            'Endoscopy' => include(
               'Colonoscopy',
               'Gastroscopy'
-            ]
+            )
           },
           'Magnetoencephalography',
           {
-            'Medical imaging' => [
+            'Medical imaging' => include(
               {
-                'Angiography' => [
+                'Angiography' => include(
                   'Aortography',
                   'Coronary angiography',
                   'Ventriculography'
-                ]
+                )
               },
               'Computed tomography',
               'Fluoroscopy',
               {
-                'Magnetic resonance imaging' => [
+                'Magnetic resonance imaging' => include(
                   'Diffuse optical imaging',
                   'Diffusion-weighted imaging'
-                ]
+                )
               },
               'Radiography',
               {
-                'Ultrasonography' => [
+                'Ultrasonography' => include(
                   'Contrast-enhanced ultrasound',
                   'Intravascular ultrasound'
-                ]
+                )
               },
               'Virtual colonoscopy'
-            ]
+            )
           },
           'Posturography'
-        ],
-        'Therapeutic' => [
+        ),
+        'Therapeutic' => include(
           'Hemodialysis',
           'Extracorporeal membrane oxygenation (ECMO)',
           'Physical therapy/Physiotherapy',
           {
-            'Shock therapy' => [
+            'Shock therapy' => include(
               'Insulin shock therapy',
               'Symptomatic treatment'
-            ]
+            )
           },
           'Transcutaneous electrical nerve stimulation (TENS)',
           'Animal-Assisted Therapy'
-        ],
-        'Surgical' => [
+        ),
+        'Surgical' => include(
           'Amputation',
           'Cardiopulmonary resuscitation (CPR)',
           'Image-guided surgery'
-        ],
-        'Anesthesia' => [
+        ),
+        'Anesthesia' => include(
           'Dissociative anesthesia',
           'General anesthesia',
           {
-            'Local anesthesia' => [
-              'Topical anesthesia',
-              'Epidural',
-              'Spinal anesthesia'
-            ]
+            'Local anesthesia' => include(
+              'Topical anesthesia (surface)',
+              'Epidural (extradural) block',
+              'Spinal anesthesia (subarachnoid block)'
+            )
           },
           'Regional anesthesia'
-        ],
-        'Other' => [
+        ),
+        'Other' => include(
           'Interventional radiology',
           'Screening'
-        ]
+        )
       }
     end
-    # rubocop:enbale Style/WordArray
 
     it { is_expected.to match expected_output }
   end
