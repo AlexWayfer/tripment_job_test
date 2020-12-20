@@ -7,35 +7,23 @@ RSpec.describe Procedure, type: :model do
 
   describe '.create' do
     subject(:procedure) do
-      described_class.create(name: 'Colonoscopy', category: category, parent: parent)
+      described_class.create(name: 'Colonoscopy', parent: parent)
     end
 
-    let(:parent) { described_class.create(name: 'Endoscopy') }
-
-    context 'without category' do
-      let(:category) { nil }
+    context 'without parent' do
+      let(:parent) { nil }
 
       it { is_expected.not_to be_valid }
+
+      describe 'parent' do
+        subject { super().parent }
+
+        it { is_expected.to be_nil }
+      end
     end
 
-    context 'with category' do
-      ## defined at the top
-
-      context 'without parent' do
-        let(:parent) { nil }
-
-        it { is_expected.to be_valid }
-
-        describe 'parent' do
-          subject { super().parent }
-
-          it { is_expected.to be_nil }
-        end
-      end
-
-      context 'with parent' do
-        ## defined at the top
-
+    context 'with parent' do
+      shared_examples 'correct behavior with parent' do
         it { is_expected.to be_valid }
 
         describe 'parent' do
@@ -54,6 +42,18 @@ RSpec.describe Procedure, type: :model do
           end
         end
       end
+
+      context 'when parent is Category' do
+        let(:parent) { category }
+
+        include_examples 'correct behavior with parent'
+      end
+
+      context 'when parent is Procedure' do
+        let(:parent) { described_class.create(name: 'Endoscopy', parent: category) }
+
+        include_examples 'correct behavior with parent'
+      end
     end
   end
 
@@ -61,7 +61,7 @@ RSpec.describe Procedure, type: :model do
     subject(:destroy) { procedure.destroy }
 
     let!(:procedure) do
-      described_class.create(name: 'Endoscopy', category: category, children: children)
+      described_class.create(name: 'Endoscopy', parent: category, children: children)
     end
 
     context 'without children' do
