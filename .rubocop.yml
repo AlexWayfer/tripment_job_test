@@ -17,6 +17,10 @@ Layout/LineLength:
 Metrics/BlockLength:
   Exclude:
     - spec/**/*
+    - lib/tasks/**/*
 
 RSpec/NestedGroups:
   Enabled: false
+RSpec/DescribeClass:
+  Exclude:
+    - spec/tasks/**/*
