@@ -19,6 +19,10 @@ describe Rake::Task['procedures:fetch'] do
     described_class.invoke
   end
 
+  after do
+    system 'rake procedures:erase'
+  end
+
   context 'without invocation' do
     let(:invoke) { false }
 
