@@ -19,10 +19,7 @@ namespace :procedures do
 
   desc 'Erase all existing procedures and categories'
   task erase: :environment do
-    until Procedure.count.zero?
-      Procedure.left_outer_joins(:children).where(children: { id: nil }).destroy_all
-    end
-
-    Category.destroy_all
+    Procedure.delete_all
+    Category.delete_all
   end
 end
