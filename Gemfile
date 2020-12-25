@@ -27,6 +27,13 @@ gem 'bootsnap', '>= 1.4.4', require: false
 # Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin AJAX possible
 # gem 'rack-cors'
 
+# Helpers for ActiveRecord
+## https://github.com/rails/rails/issues/17706
+## https://github.com/alecdotninja/active_record_distinct_on/pull/12
+# gem 'active_record_distinct_on', '~> 1.0'
+gem 'active_record_union', '~> 1.3'
+
+# Parsing Wikipedia
 gem 'mediawiktory', '~> 0.1.3'
 gem 'oga', '~> 3.3'
 
